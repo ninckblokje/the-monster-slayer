@@ -62,7 +62,8 @@ new Vue({
         log: function(isPlayer, msg) {
             this.turns.unshift({
                 isPlayer: isPlayer,
-                text: msg
+                text: msg,
+                id: this.turns.length
             });
         },
         monsterAttacks: function() {

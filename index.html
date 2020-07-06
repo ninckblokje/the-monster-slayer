@@ -1,54 +1,107 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Monster Slayer</title>
     <script src="https://npmcdn.com/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="css/foundation.min.css">
     <link rel="stylesheet" href="css/app.css">
+    <style>
+        .fade-enter-active {
+            transition: opacity 0.5s;
+        }
+
+        .fade-enter {
+            opacity: 0;
+        }
+
+        .flip-enter {}
+
+        .flip-enter-active {
+            animation: flip-in 0.25s ease-out forwards;
+        }
+
+        .flip-leave {}
+
+        .flip-leave-active {
+            animation: flip-out 0.25s ease-out forwards;
+        }
+
+        @keyframes flip-out {
+            from {
+                transform: rotateY(0deg);
+            }
+
+            to {
+                transform: rotateY(90deg);
+            }
+        }
+
+        @keyframes flip-in {
+            from {
+                transform: rotateY(90deg);
+            }
+
+            to {
+                transform: rotateY(0deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
-<div id="app">
-    <section class="row">
-        <div class="small-6 columns">
-            <h1 class="text-center">YOU</h1>
-            <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="{ width: playerHealth + '%' }">
-                    {{ playerHealth }}
+    <div id="app">
+        <section class="row">
+            <div class="small-6 columns">
+                <h1 class="text-center">YOU</h1>
+                <div class="healthbar">
+                    <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;"
+                        :style="{ width: playerHealth + '%' }">
+                        {{ playerHealth }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="small-6 columns">
-            <h1 class="text-center">MONSTER</h1>
-            <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="{ width: monsterHealth + '%' }">
-                    {{ monsterHealth }}
+            <div class="small-6 columns">
+                <h1 class="text-center">MONSTER</h1>
+                <div class="healthbar">
+                    <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;"
+                        :style="{ width: monsterHealth + '%' }">
+                        {{ monsterHealth }}
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <section class="row controls" v-if="!gameIsRunning">
-        <div class="small-12 columns">
-            <button id="start-game" @click="startGame">START NEW GAME</button>
-        </div>
-    </section>
-    <section class="row controls" v-else>
-        <div class="small-12 columns">
-            <button id="attack" @click="attack">ATTACK</button>
-            <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
-            <button id="heal" @click="heal">HEAL</button>
-            <button id="give-up" @click="stopGame">GIVE UP</button>
-        </div>
-    </section>
-    <section class="row log" v-if="turns.length > 0">
-        <div class="small-12 columns">
-            <ul>
-                <li v-for="turn in turns" :class="{ 'player-turn': turn.isPlayer, 'monster-turn': !turn.isPlayer}">
-                    {{ turn.text }}
-                </li>
-            </ul>
-        </div>
-    </section>
-</div>
-<script src="app.js"></script>
+        </section>
+        <transition name="flip" mode="out-in">
+            <section class="row controls" v-if="!gameIsRunning" key="start">
+                <div class="small-12 columns">
+                    <button id="start-game" @click="startGame">START NEW GAME</button>
+                </div>
+            </section>
+            <section class="row controls" v-else key="running">
+                <div class="small-12 columns">
+                    <button id="attack" @click="attack">ATTACK</button>
+                    <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
+                    <button id="heal" @click="heal">HEAL</button>
+                    <button id="give-up" @click="stopGame">GIVE UP</button>
+                </div>
+            </section>
+        </transition>
+        <transition name="fade">
+            <section class="row log" v-if="turns.length > 0">
+                <div class="small-12 columns">
+                    <ul>
+                        <transition-group name="fade">
+                            <li v-for="turn in turns"
+                                :class="{ 'player-turn': turn.isPlayer, 'monster-turn': !turn.isPlayer}" :key="turn.id">
+                                {{ turn.text }}
+                            </li>
+                        </transition-group>
+                    </ul>
+                </div>
+            </section>
+        </transition>
+    </div>
+    <script src="app.js"></script>
 </body>
+
 </html>
